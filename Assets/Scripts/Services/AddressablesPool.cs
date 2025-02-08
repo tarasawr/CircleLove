@@ -8,11 +8,11 @@ namespace Enemy
     {
         private readonly IObjectPool<T> _pool;
         private readonly Transform _poolParent;
-        private readonly IAddressableService _addressableService;
+        private readonly string[] _prefabAddresses;
 
-        public AddressablesPool(int initialSize, int maxSize, IAddressableService addressableService)
+        public AddressablesPool(int initialSize, int maxSize, string[] prefabAddresses)
         {
-            _addressableService = addressableService;
+            _prefabAddresses = prefabAddresses;
             _poolParent = new GameObject($"{typeof(T).Name}Pool").transform;
             _pool = new ObjectPool<T>(Create, OnGet, OnRelease, OnDestroy,true, initialSize, maxSize);
         }
@@ -23,7 +23,7 @@ namespace Enemy
 
         private T Create()
         {
-            string prefabAddress = _addressableService.GetRandomPrefabAddress();
+            string prefabAddress = _prefabAddresses[Random.Range(0, _prefabAddresses.Length)];
             var op = Addressables.InstantiateAsync(prefabAddress, _poolParent);
             op.WaitForCompletion();
             return op.Result.GetComponent<T>();

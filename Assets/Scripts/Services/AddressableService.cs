@@ -5,18 +5,16 @@ using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
 using Zenject;
 
-public class AddressableService : IAddressableService, IInitializable
+public class AddressableService : IAddressableService
 {
-    private readonly List<string> _prefabAddresses = new ()
-    {
-        "Assets/Prefab/RectangleEnemy.prefab",
-        "Assets/Prefab/CapsuleEnemy.prefab"
-    };
-
-    private readonly Dictionary<string, AsyncOperationHandle> _loadedAssets = new ();
-
+    [Inject] private IConfigService _configService;
+    
+    private readonly Dictionary<string, AsyncOperationHandle> _loadedAssets = new();
+    private string[] _prefabAddresses;
+    
     public void Initialize()
     {
+        _prefabAddresses = _configService.GetConfig<EnemyConfig>().PrefabAddresses;
         DownloadDependenciesAsync().Forget();
     }
 
@@ -41,10 +39,5 @@ public class AddressableService : IAddressableService, IInitializable
     public void ReleaseAsset<T>(T asset) where T : Object
     {
         Addressables.Release(asset);
-    }
-
-    public string GetRandomPrefabAddress()
-    {
-        return _prefabAddresses[Random.Range(0, _prefabAddresses.Count)];
     }
 }

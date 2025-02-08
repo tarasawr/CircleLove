@@ -2,17 +2,17 @@
 
 namespace Enemy
 {
-    public class EnemyFactoryService : IEnemyFactory
+    public class EnemyFactory : IEnemyFactory
     {
         private const int DefaultMaxEnemyCount = 50;
 
         private readonly AddressablesPool<EnemyBase> _enemyPool;
         private readonly List<EnemyBase> _activeEnemies = new();
         
-        public EnemyFactoryService(IAddressableService addressableService)
+        public EnemyFactory(string[] prefabAddresses)
         {
             _enemyPool = new AddressablesPool<EnemyBase>(initialSize: 10, maxSize: DefaultMaxEnemyCount,
-                addressableService: addressableService);
+                prefabAddresses: prefabAddresses);
         }
 
         public EnemyBase Get()
@@ -28,6 +28,6 @@ namespace Enemy
                 _enemyPool.Release(enemy);
         }
 
-        public List<EnemyBase> GetActive() => new List<EnemyBase>(_activeEnemies);
+        public List<EnemyBase> GetActive() => new (_activeEnemies);
     }
 }

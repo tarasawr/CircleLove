@@ -445,7 +445,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 711c3be5daa64614bcd9dad7dbd252ef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxEnemyCount: 50
 --- !u!1 &1040107070
 GameObject:
   m_ObjectHideFlags: 0
@@ -604,7 +603,7 @@ GameObject:
   - component: {fileID: 1369567401}
   - component: {fileID: 1369567400}
   m_Layer: 0
-  m_Name: EnemyService
+  m_Name: EnemyController
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -884,8 +883,8 @@ SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
   - {fileID: 998008506}
+  - {fileID: 520134888}
+  - {fileID: 1143326119}
   - {fileID: 519420032}
   - {fileID: 1669310424}
   - {fileID: 1369567401}
-  - {fileID: 520134888}
-  - {fileID: 1143326119}

@@ -13,7 +13,7 @@ namespace Save
             string jsonData = JsonUtility.ToJson(data);
             File.WriteAllText(_saveFilePath, jsonData);
         }
-        
+
         public T Load<T>()
         {
             if (File.Exists(_saveFilePath))
@@ -36,14 +36,7 @@ namespace Save
         public void DeleteSave()
         {
             if (File.Exists(_saveFilePath))
-            {
                 File.Delete(_saveFilePath);
-                Debug.Log("Сохранение удалено.");
-            }
-            else
-            {
-                Debug.Log("Сохранение не найдено.");
-            }
         }
     }
 }
