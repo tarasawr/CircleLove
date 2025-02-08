@@ -7,14 +7,13 @@ using Zenject;
 
 public class AddressableService : IAddressableService
 {
-    [Inject] private IConfigService _configService;
-    
     private readonly Dictionary<string, AsyncOperationHandle> _loadedAssets = new();
     private string[] _prefabAddresses;
     
-    public void Initialize()
+    [Inject]
+    public AddressableService(IConfigService configService)
     {
-        _prefabAddresses = _configService.GetConfig<EnemyConfig>().PrefabAddresses;
+        _prefabAddresses = configService.GetConfig<EnemyConfig>().PrefabAddresses;
         DownloadDependenciesAsync().Forget();
     }
 
