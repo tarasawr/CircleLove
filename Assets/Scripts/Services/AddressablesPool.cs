@@ -2,7 +2,7 @@
 using UnityEngine.AddressableAssets;
 using UnityEngine.Pool;
 
-namespace Enemy
+namespace Services
 {
     public class AddressablesPool<T> where T : Component
     {

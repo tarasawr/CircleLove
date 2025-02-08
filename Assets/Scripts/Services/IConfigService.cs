@@ -1,6 +1,9 @@
 ﻿using UnityEngine;
 
-public interface IConfigService
+namespace Services
 {
-    T GetConfig<T>() where T : ScriptableObject;
+    public interface IConfigService
+    {
+        T GetConfig<T>() where T : ScriptableObject;
+    }
 }

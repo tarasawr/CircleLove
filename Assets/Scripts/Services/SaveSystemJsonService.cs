@@ -2,7 +2,7 @@ using System;
 using System.IO;
 using UnityEngine;
 
-namespace Save
+namespace Services
 {
     public class SaveSystemJsonService : ISaveSystem
     {

@@ -2,36 +2,39 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ConfigService : IConfigService
+namespace Services
 {
-    private Dictionary<Type, ScriptableObject> _configDictionary = new ();
-
-    private const string ConfigsPath = "Configs";
-
-    public T GetConfig<T>() where T : ScriptableObject
+    public class ConfigService : IConfigService
     {
-        var type = typeof(T);
+        private Dictionary<Type, ScriptableObject> _configDictionary = new();
 
-        if (_configDictionary.TryGetValue(type, out ScriptableObject config))
+        private const string ConfigsPath = "Configs";
+
+        public T GetConfig<T>() where T : ScriptableObject
         {
-            return config as T;
-        }
+            var type = typeof(T);
 
-        T loadedConfig = Resources.Load<T>($"{ConfigsPath}/{type.Name}");
-        if (loadedConfig != null)
-        {
-            _configDictionary.Add(type, loadedConfig);
-            return loadedConfig;
-        }
+            if (_configDictionary.TryGetValue(type, out ScriptableObject config))
+            {
+                return config as T;
+            }
 
-        T[] loadedConfigs = Resources.LoadAll<T>(ConfigsPath);
-        if (loadedConfigs != null && loadedConfigs.Length > 0)
-        {
-            loadedConfig = loadedConfigs[0];
-            _configDictionary.Add(type, loadedConfig);
-            return loadedConfig;
-        }
+            T loadedConfig = Resources.Load<T>($"{ConfigsPath}/{type.Name}");
+            if (loadedConfig != null)
+            {
+                _configDictionary.Add(type, loadedConfig);
+                return loadedConfig;
+            }
 
-        throw new Exception($"Not found {type} Resources/{ConfigsPath}");
+            T[] loadedConfigs = Resources.LoadAll<T>(ConfigsPath);
+            if (loadedConfigs != null && loadedConfigs.Length > 0)
+            {
+                loadedConfig = loadedConfigs[0];
+                _configDictionary.Add(type, loadedConfig);
+                return loadedConfig;
+            }
+
+            throw new Exception($"Not found {type} Resources/{ConfigsPath}");
+        }
     }
 }

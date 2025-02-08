@@ -1,24 +1,26 @@
-using Score;
 using UniRx;
 using UnityEngine;
 using UnityEngine.UI;
 using Zenject;
 
-public class ScoreView : MonoBehaviour
+namespace Score
 {
-    [Inject] private ScoreModel _scoreModel;
-
-    [SerializeField] private Text scoreText;
-    [SerializeField] private Text distanceText;
-
-    private void Start()
+    public class ScoreView : MonoBehaviour
     {
-        _scoreModel.CurrentScore
-            .Subscribe(score => scoreText.text = $"Score:{score}")
-            .AddTo(this);
+        [Inject] private ScoreModel _scoreModel;
 
-        _scoreModel.CurrentDistance
-            .Subscribe(distance => distanceText.text = $"Distance:{distance:F1}")
-            .AddTo(this);
+        [SerializeField] private Text scoreText;
+        [SerializeField] private Text distanceText;
+
+        private void Start()
+        {
+            _scoreModel.CurrentScore
+                .Subscribe(score => scoreText.text = $"Score:{score}")
+                .AddTo(this);
+
+            _scoreModel.CurrentDistance
+                .Subscribe(distance => distanceText.text = $"Distance:{distance:F1}")
+                .AddTo(this);
+        }
     }
 }

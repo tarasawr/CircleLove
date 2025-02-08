@@ -2,7 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public interface IPathService : IDisposable
+namespace Services
 {
-    IObservable<List<Vector3>> OnPathUpdated { get; }
+    public interface IPathService : IDisposable
+    {
+        IObservable<List<Vector3>> OnPathUpdated { get; }
+    }
 }

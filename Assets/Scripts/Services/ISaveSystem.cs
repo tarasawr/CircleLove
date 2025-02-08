@@ -1,4 +1,4 @@
-﻿namespace Save
+﻿namespace Services
 {
     public interface ISaveSystem
     {

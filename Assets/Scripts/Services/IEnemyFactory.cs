@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
+using Enemy;
 
-namespace Enemy
+namespace Services
 {
     public interface IEnemyFactory
     {
