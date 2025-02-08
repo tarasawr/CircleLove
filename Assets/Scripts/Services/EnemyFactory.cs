@@ -28,6 +28,6 @@ namespace Enemy
                 _enemyPool.Release(enemy);
         }
 
-        public List<EnemyBase> GetActive() => new (_activeEnemies);
+        public List<EnemyBase> GetActive() => _activeEnemies;
     }
 }
