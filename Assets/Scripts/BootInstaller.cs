@@ -10,6 +10,6 @@ public class BootInstaller : MonoInstaller
         Container.Bind<IAddressableService>().To<AddressableService>().AsSingle().NonLazy();
         
         Container.Bind<ISaveSystem>().To<SaveSystemJsonService>().AsSingle();
-        Container.BindInterfacesAndSelfTo<ScoreModel>().AsSingle().NonLazy();
+        Container.BindInterfacesAndSelfTo<ScoreModel>().AsSingle();
     }
 }
