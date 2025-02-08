@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using Enemy;
 
 namespace Services
 {
@@ -25,8 +24,8 @@ namespace Services
 
         public void Release(EnemyBase enemy)
         {
-            if (_activeEnemies.Remove(enemy))
-                _enemyPool.Release(enemy);
+            _activeEnemies.Remove(enemy);
+            _enemyPool.Release(enemy);
         }
 
         public List<EnemyBase> GetActive() => _activeEnemies;

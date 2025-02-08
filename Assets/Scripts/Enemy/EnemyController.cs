@@ -1,4 +1,5 @@
-﻿using Score;
+﻿using System.Linq;
+using Score;
 using Services;
 using UnityEngine;
 using Zenject;
@@ -29,7 +30,9 @@ namespace Enemy
         private void ShowEnemy()
         {
             EnemyBase enemy = _enemyFactory.Get();
-            enemy.transform.position = _positionProvider.GetPosition(_enemyFactory.GetActive());
+            enemy.transform.position = _positionProvider.GetPosition(_enemyFactory.GetActive()
+                .Select(t => t.transform)
+                .ToList());
             enemy.OnCollision.Subscribe(OnEnemyCollision).AddTo(enemy);
         }
 
