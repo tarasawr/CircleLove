@@ -1,6 +1,7 @@
 ﻿using Score;
 using UnityEngine;
 using Zenject;
+using UniRx;
 
 namespace Enemy
 {
@@ -8,6 +9,7 @@ namespace Enemy
     {
         [Inject] private ScoreModel ScoreModel;
         [Inject] private IConfigService ConfigService;
+        [Inject] private Camera Camera;
         
         [SerializeField] private int initialEnemyCount = 10;
 
@@ -16,24 +18,25 @@ namespace Enemy
         
         private void Start()
         {
-            _positionProvider = new PositionProvider(Camera.main);
+            _positionProvider = new PositionProvider(Camera);
             _enemyFactory = new EnemyFactory(ConfigService.GetConfig<EnemyConfig>().PrefabAddresses);
+            
             for (int i = 0; i < initialEnemyCount; i++)
-                SpawnEnemy();
+                ShowEnemy();
         }
 
-        private void SpawnEnemy()
+        private void ShowEnemy()
         {
             EnemyBase enemy = _enemyFactory.Get();
             enemy.transform.position = _positionProvider.GetPosition(_enemyFactory.GetActive());
-            enemy.Init(OnEnemyCollision);
+            enemy.OnCollision.Subscribe(OnEnemyCollision).AddTo(enemy);
         }
 
         private void OnEnemyCollision(EnemyBase enemy)
         {
             _enemyFactory.Release(enemy);
             ScoreModel.CurrentScore.Value++;
-            SpawnEnemy();
+            ShowEnemy();
         }
     }
 }
