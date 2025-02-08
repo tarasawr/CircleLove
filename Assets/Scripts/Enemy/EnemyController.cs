@@ -8,20 +8,27 @@ using UniRx;
 namespace Enemy
 {
     public class EnemyController : MonoBehaviour
-    {
-        [Inject] private ScoreModel ScoreModel;
-        [Inject] private IConfigService ConfigService;
-        [Inject] private Camera Camera;
-        
-        [SerializeField] private int initialEnemyCount = 10;
-
+    { 
+        private ScoreModel _scoreModel;
+        private IConfigService _configService;
+        private Camera _camera;
         private IPositionProvider _positionProvider;
         private IEnemyFactory _enemyFactory;
-        
+                
+        [SerializeField] private int initialEnemyCount = 10;
+
+        [Inject]
+        private void Construct(ScoreModel scoreModel, IConfigService configService, Camera camera)
+        {
+            _scoreModel = scoreModel;
+            _configService = configService;
+            _camera = camera;
+        }
+
         private void Start()
         {
-            _positionProvider = new PositionProvider(Camera);
-            _enemyFactory = new EnemyFactory(ConfigService.GetConfig<EnemyConfig>().PrefabAddresses);
+            _positionProvider = new PositionProvider(_camera);
+            _enemyFactory = new EnemyFactory(_configService.GetConfig<EnemyConfig>().PrefabAddresses);
             
             for (int i = 0; i < initialEnemyCount; i++)
                 ShowEnemy();
@@ -39,7 +46,7 @@ namespace Enemy
         private void OnEnemyCollision(EnemyBase enemy)
         {
             _enemyFactory.Release(enemy);
-            ScoreModel.CurrentScore.Value++;
+            _scoreModel.CurrentScore.Value++;
             ShowEnemy();
         }
     }
