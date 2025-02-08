@@ -1,91 +1,68 @@
 ﻿using System;
-using System.Collections.Generic;
 using UniRx;
 using UnityEngine;
-using System.Linq;
+using Zenject;
+
 
 public class InputService : IInputService
 {
     private readonly Camera _camera;
-    private readonly Subject<List<Vector3>> _onPathUpdated = new();
-    public IObservable<List<Vector3>> OnPathUpdated => _onPathUpdated;
-    
-    private readonly CompositeDisposable _disposables = new();
-    private readonly List<Vector3> _path = new();
+    private readonly CompositeDisposable _disposables = new CompositeDisposable();
 
-    private Vector3 _lastDirection = Vector3.zero;
-    
+    private readonly Subject<Vector3> _onMouseDown = new Subject<Vector3>();
+    public IObservable<Vector3> OnMouseDown => _onMouseDown;
+
+    private readonly Subject<Vector3> _onMouseDrag = new Subject<Vector3>();
+    public IObservable<Vector3> OnMouseDrag => _onMouseDrag;
+
+    private readonly Subject<Vector3> _onMouseUp = new Subject<Vector3>();
+    public IObservable<Vector3> OnMouseUp => _onMouseUp;
+
+    [Inject]
     public InputService(Camera camera)
     {
         _camera = camera;
         SubscribeInput();
     }
-    
+
     private void SubscribeInput()
     {
         Observable.EveryUpdate()
             .Where(_ => Input.GetMouseButtonDown(0))
-            .Subscribe(_ => MouseDown())
+            .Subscribe(_ =>
+            {
+                Vector3 pos = _camera.ScreenToWorldPoint(Input.mousePosition);
+                pos.z = 0f;
+                _onMouseDown.OnNext(pos);
+            })
             .AddTo(_disposables);
-        
+
         Observable.EveryUpdate()
             .Where(_ => Input.GetMouseButton(0))
-            .Subscribe(_ => MouseMove())
+            .Subscribe(_ =>
+            {
+                Vector3 pos = _camera.ScreenToWorldPoint(Input.mousePosition);
+                pos.z = 0f;
+                _onMouseDrag.OnNext(pos);
+            })
             .AddTo(_disposables);
-        
+
         Observable.EveryUpdate()
             .Where(_ => Input.GetMouseButtonUp(0))
-            .Subscribe(_ => MouseUp())
+            .Subscribe(_ =>
+            {
+                Vector3 pos = _camera.ScreenToWorldPoint(Input.mousePosition);
+                pos.z = 0f;
+                _onMouseUp.OnNext(pos);
+            })
             .AddTo(_disposables);
     }
-    
-    private void MouseDown()
-    {
-        _path.Clear();
-        _lastDirection = Vector3.zero;
-        AddPointToPath();
-    }
-    
-    private void MouseMove()
-    {
-        Vector3 mousePosition = _camera.ScreenToWorldPoint(Input.mousePosition);
-        mousePosition.z = 0f;
-        if (_path.Count == 0 || ShouldAddPoint(mousePosition))
-        {
-            _path.Add(mousePosition);
-        }
-    }
-    
-    private void MouseUp()
-    {
-        if (_path.Count > 0)
-        {
-            _onPathUpdated.OnNext(new List<Vector3>(_path));
-        }
-    }
-    
-    private void AddPointToPath()
-    {
-        Vector3 mousePosition = _camera.ScreenToWorldPoint(Input.mousePosition);
-        mousePosition.z = 0f;
-        _path.Add(mousePosition);
-    }
-    
-    private bool ShouldAddPoint(Vector3 newPoint)
-    {
-        Vector3 lastPoint = _path.Last();
-        Vector3 direction = (newPoint - lastPoint).normalized;
-        if (_lastDirection == Vector3.zero || Vector3.Dot(_lastDirection, direction) < 0.99f)
-        {
-            _lastDirection = direction;
-            return true;
-        }
-        return false;
-    }
-    
+
     public void Dispose()
     {
         _disposables.Dispose();
-        _onPathUpdated.Dispose();
+        _onMouseDown.Dispose();
+        _onMouseDrag.Dispose();
+        _onMouseUp.Dispose();
     }
 }

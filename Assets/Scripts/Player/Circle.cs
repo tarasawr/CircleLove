@@ -8,18 +8,19 @@ using Zenject;
 
 public class Circle : MonoBehaviour, IPlayer
 {
-    [Inject] private ScoreModel _scoreModel;
+    [Inject] private ScoreModel ScoreModel;
+    [Inject] private IPathService PathService;
 
-    [SerializeField] private float speed = 5f;
+    [SerializeField] private float speed = 8f;
 
     private IMovementAnimator _movementAnimator;
-    private List<Vector3> _path = new();
+    private List<Vector3> _path = new List<Vector3>();
     private float _totalPathLength = 0f;
     private bool _isMoving = false;
 
-    private void Awake()
+    private void Start()
     {
-        new InputService(Camera.main).OnPathUpdated
+        PathService.OnPathUpdated
             .Subscribe(OnPathUpdated)
             .AddTo(this);
         _movementAnimator = new DOTweenMovementAnimator();
@@ -50,25 +51,24 @@ public class Circle : MonoBehaviour, IPlayer
         _path = finalPath;
         _totalPathLength = CalculateTotalPathLength(_path);
         _isMoving = true;
-        MoveAlongPath();
+        MovePath();
     }
 
-    private void MoveAlongPath()
+    private void MovePath()
     {
         _movementAnimator.AnimateMovement(transform, _path, _totalPathLength, speed, OnMoveUpdate, OnMoveComplete);
     }
 
     private void OnMoveUpdate(Vector3 position, float deltaDistance)
     {
-        _scoreModel.CurrentDistance.Value += deltaDistance / 10f;
+        ScoreModel.CurrentDistance.Value += deltaDistance / 10f;
     }
 
     private void OnMoveComplete()
     {
         _isMoving = false;
     }
-
-
+    
     private float CalculateTotalPathLength(List<Vector3> path)
     {
         float length = 0f;
@@ -76,17 +76,15 @@ public class Circle : MonoBehaviour, IPlayer
         {
             length += Vector3.Distance(path[i - 1], path[i]);
         }
-
         return length;
     }
-
 
     private void OnMouseDown()
     {
         StopMoving();
     }
 
-    public void StopMoving()
+    private void StopMoving()
     {
         if (!_isMoving)
             return;
