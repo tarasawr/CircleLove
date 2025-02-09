@@ -1,36 +1,31 @@
 ﻿using System.Linq;
 using Score;
 using Services;
-using UnityEngine;
-using Zenject;
 using UniRx;
+using Zenject;
 
 namespace Enemy
 {
-    public class EnemyController : MonoBehaviour
+    public class EnemyController : IInitializable, System.IDisposable
     { 
-        private ScoreModel _scoreModel;
-        private IConfigService _configService;
-        private Camera _camera;
-        private IPositionProvider _positionProvider;
-        private IEnemyFactory _enemyFactory;
-                
-        [SerializeField] private int initialEnemyCount = 10;
-
-        [Inject]
-        private void Construct(ScoreModel scoreModel, IConfigService configService, Camera camera)
+        private readonly ScoreModel _scoreModel;
+        private readonly IEnemyFactory _enemyFactory;
+        private readonly IPositionProvider _positionProvider;
+        private readonly int _initialEnemyCount = 10;
+        
+        public EnemyController(
+            ScoreModel scoreModel,
+            IEnemyFactory enemyFactory,
+            IPositionProvider positionProvider)
         {
             _scoreModel = scoreModel;
-            _configService = configService;
-            _camera = camera;
+            _enemyFactory = enemyFactory;
+            _positionProvider = positionProvider;
         }
-
-        private void Start()
+        
+        public void Initialize()
         {
-            _positionProvider = new PositionProvider(_camera);
-            _enemyFactory = new EnemyFactory(_configService.GetConfig<EnemyConfig>().PrefabAddresses);
-            
-            for (int i = 0; i < initialEnemyCount; i++)
+            for (int i = 0; i < _initialEnemyCount; i++)
                 ShowEnemy();
         }
 
@@ -38,8 +33,8 @@ namespace Enemy
         {
             EnemyBase enemy = _enemyFactory.Get();
             enemy.transform.position = _positionProvider.GetPosition(_enemyFactory.GetActive()
-                .Select(t => t.transform)
-                .ToList());
+                    .Select(t => t.transform)
+                    .ToList());
             enemy.OnCollision.Subscribe(OnEnemyCollision).AddTo(enemy);
         }
 
@@ -48,6 +43,10 @@ namespace Enemy
             _enemyFactory.Release(enemy);
             _scoreModel.CurrentScore.Value++;
             ShowEnemy();
+        }
+
+        public void Dispose()
+        {
         }
     }
 }
