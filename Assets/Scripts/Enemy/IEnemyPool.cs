@@ -1,12 +1,12 @@
 ﻿using System.Collections.Generic;
-using Enemy;
 
-namespace Services
+namespace Enemy
 {
-    public interface IEnemyFactory
+    public interface IEnemyPool
     {
         EnemyBase Get();
         void Release(EnemyBase enemy);
-        List<EnemyBase> GetActive();
+        void Dispose();
+        IEnumerable<EnemyBase> GetActive();
     }
 }

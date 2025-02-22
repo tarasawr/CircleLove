@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
-using Zenject;
 
 public class PositionProvider : IPositionProvider
 {
@@ -13,7 +12,7 @@ public class PositionProvider : IPositionProvider
         _camera = camera;
     }
 
-    public Vector3 GetPosition(List<Transform> activeEnemies)
+    public Vector3 GetPosition(IEnumerable<Vector3> activeEnemies)
     {
         Vector3 candidate = Vector3.zero;
 
@@ -27,7 +26,7 @@ public class PositionProvider : IPositionProvider
             bool overlaps = false;
             foreach (var transform in activeEnemies)
             {
-                if (Vector3.Distance(candidate, transform.transform.position) < MinDistance)
+                if (Vector3.Distance(candidate, transform) < MinDistance)
                 {
                     overlaps = true;
                     break;

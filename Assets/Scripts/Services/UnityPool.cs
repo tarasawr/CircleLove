@@ -4,13 +4,13 @@ using UnityEngine.Pool;
 
 namespace Services
 {
-    public class AddressablesPool<T> where T : Component
+    public class UnityPool<T> where T : Component
     {
         private readonly IObjectPool<T> _pool;
         private readonly Transform _poolParent;
         private readonly string[] _prefabAddresses;
 
-        public AddressablesPool(int initialSize, int maxSize, string[] prefabAddresses)
+        public UnityPool(int initialSize, int maxSize, string[] prefabAddresses)
         {
             _prefabAddresses = prefabAddresses;
             _poolParent = new GameObject($"{typeof(T).Name}Pool").transform;
@@ -18,9 +18,9 @@ namespace Services
         }
 
         public T Get() => _pool.Get();
-
         public void Release(T instance) => _pool.Release(instance);
-
+        public void Dispose() => _pool.Clear();
+        
         private T Create()
         {
             string prefabAddress = _prefabAddresses[Random.Range(0, _prefabAddresses.Length)];

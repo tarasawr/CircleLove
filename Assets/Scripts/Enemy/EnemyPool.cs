@@ -1,17 +1,18 @@
 ﻿using System.Collections.Generic;
+using Services;
 
-namespace Services
+namespace Enemy
 {
-    public class EnemyFactory : IEnemyFactory
+    public class EnemyPool : IEnemyPool
     {
         private const int DefaultMaxEnemyCount = 50;
 
-        private readonly AddressablesPool<EnemyBase> _enemyPool;
+        private readonly UnityPool<EnemyBase> _enemyPool;
         private readonly List<EnemyBase> _activeEnemies = new();
         
-        public EnemyFactory(string[] prefabAddresses)
+        public EnemyPool(string[] prefabAddresses)
         {
-            _enemyPool = new AddressablesPool<EnemyBase>(initialSize: 10, maxSize: DefaultMaxEnemyCount,
+            _enemyPool = new UnityPool<EnemyBase>(initialSize: 10, maxSize: DefaultMaxEnemyCount,
                 prefabAddresses: prefabAddresses);
         }
 
@@ -28,6 +29,7 @@ namespace Services
             _enemyPool.Release(enemy);
         }
 
-        public List<EnemyBase> GetActive() => _activeEnemies;
+        public void Dispose() => _enemyPool.Dispose();
+        public IEnumerable<EnemyBase> GetActive() => _activeEnemies;
     }
 }

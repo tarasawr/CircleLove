@@ -2,27 +2,30 @@
 using UniRx;
 using UnityEngine;
 
-public abstract class EnemyBase : MonoBehaviour
+namespace Enemy
 {
-    private const string PlayerTag = "Player";
-
-    private Subject<EnemyBase> _collisionSubject = new();
-
-    public IObservable<EnemyBase> OnCollision => _collisionSubject;
-
-    private void OnTriggerEnter2D(Collider2D col)
+    public abstract class EnemyBase : MonoBehaviour
     {
-        if (col.CompareTag(PlayerTag))
-            _collisionSubject.OnNext(this);
-    }
+        private const string PlayerTag = "Player";
 
-    protected virtual void OnDisable()
-    {
-        _collisionSubject.OnCompleted(); // Завершаем поток событий
-    }
+        private Subject<EnemyBase> _collisionSubject = new();
 
-    private void OnEnable()
-    {
-        _collisionSubject = new Subject<EnemyBase>(); // Пересоздаём при повторном использовании
+        public IObservable<EnemyBase> OnCollision => _collisionSubject;
+
+        private void OnTriggerEnter2D(Collider2D col)
+        {
+            if (col.CompareTag(PlayerTag))
+                _collisionSubject.OnNext(this);
+        }
+
+        protected virtual void OnDisable()
+        {
+            _collisionSubject.OnCompleted();
+        }
+
+        private void OnEnable()
+        {
+            _collisionSubject = new Subject<EnemyBase>();
+        }
     }
 }

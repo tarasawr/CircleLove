@@ -3,5 +3,5 @@ using UnityEngine;
 
 public interface IPositionProvider
 {
-    Vector3 GetPosition(List<Transform> activeEnemies);
+    Vector3 GetPosition(IEnumerable<Vector3> activeEnemies);
 }

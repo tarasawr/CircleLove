@@ -13,11 +13,11 @@ public class BootSceneInstaller : MonoInstaller
         Container.Bind<IPathService>().To<PathService>().AsSingle();
         Container.BindInterfacesAndSelfTo<ScoreModel>().AsSingle();
         
-        Container.Bind<IEnemyFactory>().FromMethod(context =>
+        Container.Bind<IEnemyPool>().FromMethod(context =>
         {
             var configService = context.Container.Resolve<IConfigService>();
             var enemyConfig = configService.GetConfig<EnemyConfig>();
-            return new EnemyFactory(enemyConfig.PrefabAddresses);
+            return new EnemyPool(enemyConfig.PrefabAddresses);
         }).AsSingle().NonLazy();
 
     
